@@ -1,0 +1,14 @@
+{
+  "name": "multi-login-ext",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Chromium extension: several logins at once on any site, one session per tab profile",
+  "devDependencies": {
+    "playwright-core": "1.65.1"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.mjs\"",
+    "spike": "node test/spike.mjs && node test/shim-spike.mjs && node test/popup-spike.mjs && node test/resilience-spike.mjs"
+  }
+}
