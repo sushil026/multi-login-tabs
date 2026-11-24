@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Multi Login Tabs",
+  "version": "0.1.0",
+  "description": "Stay logged in as several users at once in normal tabs, on any site.",
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_title": "Multi Login Tabs", "default_popup": "popup.html" },
+  "permissions": ["declarativeNetRequest", "webRequest", "webNavigation", "tabs", "tabGroups", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/shim-main.js"],
+      "run_at": "document_start",
+      "all_frames": true,
+      "world": "MAIN"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/bridge.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}
