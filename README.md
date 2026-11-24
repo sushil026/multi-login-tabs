@@ -43,7 +43,7 @@ Typical flow for testing your app as three users: open the login page, click **O
 
 ## Permissions, and why
 
-`<all_urls>` host access is required because the point is to work on any site. `declarativeNetRequest` rewrites cookie headers, `webRequest` reads `Set-Cookie`, `webNavigation` finds the opener of new tabs, `tabs` / `tabGroups` assign and color tabs, `storage` keeps profiles and jars. No data leaves your machine; the extension makes no network requests of its own.
+`<all_urls>` host access is required because the point is to work on any site. `declarativeNetRequest` rewrites cookie headers, `webRequest` reads `Set-Cookie`, `webNavigation` finds the opener of new tabs, `tabGroups` colors and names the tab groups, `storage` keeps profiles and jars. The `tabs` permission is not requested: host access already lets the extension read the address of tabs, and assigning or grouping tabs does not need it. The header rules apply only to tabs assigned to a profile. The `webRequest` listener and the content scripts are loaded for every page, but they ignore and store nothing for tabs without a profile. No data leaves your machine; the extension makes no network requests of its own.
 
 ## Known limits
 
@@ -61,7 +61,6 @@ Tested in Brave only. Things that are **known gaps** (not bugs to be found by lu
 - Every cookie change rebuilds all rules. At several hundred scopes this took about 60 ms per cookie in testing, so very large jars make rotating cookies slightly slower to take effect.
 - **Extension reload and browser restart.** Tab assignments and installed rules do not survive either, but the tab groups do. On startup and on reload the extension re-attaches every tab whose group has a profile's exact name and color, and reloads it. Before that happens, a restored tab may load once with your normal session; nothing from a profile's jar is exposed during that window. Renaming a group in the browser stops it from matching, so then assign the tab again from the popup.
 - Sites with bot detection may notice header rewriting. Use this on your own apps.
-- The extension has no icon yet (the browser shows a default one).
 
 ## Development
 
@@ -73,5 +72,15 @@ npm run spike       # browser tests in Brave: cookies/tabs, page storage, popup 
 Not automatable here, so only simulated: the real `chrome.runtime.reload()` (an extension loaded with `--load-extension` does not come back) and the real 30-second idle shutdown of the service worker (Playwright keeps the worker attached). `mlx.simulateRestart()` in `background.js` rebuilds the engine from storage exactly as a freshly started worker does, and is what those tests use. `test/limits-probe.mjs` and `test/restart-probe.mjs` are the exploratory scripts that established this.
 
 Run `npm install` once (it installs `playwright-core`, the only dev dependency). The browser tests load the extension into Brave with Playwright, expected at its default Windows install path (set `BROWSER_PATH` to the browser executable otherwise), and run against a local test server (`test/echo-server.mjs`). Branded Chrome 157 ignores `--load-extension`, so tests default to Brave; set `BROWSER=edge` or `BROWSER=chrome` to try the others.
+
+### Store package
+
+```
+npm run package     # build dist/ (test hook removed), smoke-test it in Brave, write multi-login-tabs-<version>.zip
+node scripts/make-icons.mjs        # re-render icons/ from store/icon-source.svg
+node scripts/make-screenshots.mjs  # re-make store/screenshot-1.png
+```
+
+The zip contains only the runtime files. `scripts/build.mjs` removes the `globalThis.mlx` test hook between the `@test-hook` markers in `background.js` and fails if the markers are missing. Listing text and permission justifications are in `store/listing.md`; the privacy policy is `PRIVACY.md`. The version in `manifest.json` must be raised for every store upload.
 
 Layout: `background.js` wires Chrome events to `lib/engine.js`; `lib/` holds the pure logic; `content/` the page scripts; `popup.*` the UI; `test/` all tests; `TASKS.md` the build log and results.

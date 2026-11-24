@@ -52,6 +52,16 @@
 - [x] H5. README: SameSite/Partitioned ignored, rule budget, rebuild cost (~60 ms per cookie at ~450 scopes, measured in the flood test), reload/restart behaviour.
 - [x] G3. Manual checks handed to the user (see below). NOT done by me: they need a person in the real Brave window.
 
+## Phase I: Chrome Web Store prep (branch `store-prep`)
+- [x] I1. `scripts/build.mjs` builds `dist/` (runtime files only) and strips the `globalThis.mlx` test hook between `@test-hook` markers in `background.js`; fails if markers are missing, duplicated or reversed, or the hook survives. Never deletes files (stops on stale files in `dist/`). Unit-tested in `test/build.test.mjs` (4 tests).
+- [x] I2. `test/dist-smoke.mjs` runs against the store build in Brave: no `tabs` permission, no `mlx`, popup lists profiles, "Use in this tab" works through the real popup, profile tab sends alice while the real login stays carol, icon served. 6/6.
+- [x] I3. Manifest: `icons` (16/32/48/128) and `action.default_icon`, `homepage_url`, `minimum_chrome_version` 111. The `tabs` permission was removed: all unit and browser suites still pass without it (it is not needed because `<all_urls>` host access already exposes tab URLs).
+- [x] I4. Icons rendered from `store/icon-source.svg` by `scripts/make-icons.mjs` (original artwork: two overlapping user silhouettes). Padding on the 128 px icon is 16 px per side; I did not verify Google's current icon guidance.
+- [x] I5. `PRIVACY.md`, `store/listing.md` (short and long description, single purpose, permission justifications, remote code, data disclosure, reviewer steps), `store/screenshot-1.png` (1280x800, real popup in a composed image).
+- [x] I6. `npm run package` = build + smoke + `multi-login-tabs-<version>.zip` (Windows bsdtar, manifest at root, forward-slash entries checked).
+- [x] I7. Review fixes: `popup.js` used `URL.canParse` (Chrome 120, I believe; not verified against docs) while the manifest says 111, so it now uses try/catch. Grepped the shipped JS for other recent built-ins (`withResolvers`, `groupBy`, `fromAsync`, `toSorted`, `findLast`, `.at(`, `structuredClone`, `replaceAll`, `hasOwn`, new `Set` methods, `isWellFormed`, `??=`): none. README no longer lists `tabs`; privacy policy and listing no longer claim the extension "does not read" tabs without a profile (it receives their response headers and ignores them).
+- Unverified, check in the dashboard: store category, exact data-disclosure wording, screenshot/promo image requirements, and whether 111 is right for manifest `world: "MAIN"` (docs confirm `ExecutionWorld` MAIN from Chrome 111; the manifest key itself was not separately confirmed). 111 is a lower bound from APIs I checked, NOT tested on a real Chrome 111, and Chrome itself was never used as the test browser (Brave only).
+
 ### Manual checks for you (all untested by me)
 1. Load unpacked in Brave (`brave://extensions`, Developer mode, Load unpacked, this folder). Confirm no errors on the extension card.
 2. Start your app locally. Open it (for example `http://localhost:3100`), click the toolbar icon, **Open in all profiles**, log in as a different user in each tab, reload all tabs: each must keep its own user.
