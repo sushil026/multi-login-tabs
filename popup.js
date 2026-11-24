@@ -30,7 +30,14 @@ async function currentTab() {
   return active;
 }
 
-const isWebUrl = (value) => URL.canParse(value) && /^https?:$/.test(new URL(value).protocol);
+// try/catch instead of URL.canParse: canParse needs Chrome 120, the manifest promises 111.
+function isWebUrl(value) {
+  try {
+    return /^https?:$/.test(new URL(value).protocol);
+  } catch {
+    return false;
+  }
+}
 
 // Runs one background action, then re-reads state. Errors are shown instead of thrown.
 async function run(type, payload, successText) {
