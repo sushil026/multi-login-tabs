@@ -6,7 +6,9 @@ import path from 'node:path';
 import { chromium } from 'playwright-core';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-export const extPath = path.resolve(here, '..');
+// EXT_PATH points the tests at another build of the extension (for example dist/, the store package).
+export const extPath = path.resolve(process.env.EXT_PATH ?? path.join(here, '..'));
+export const repoPath = path.resolve(here, '..');
 
 const CANDIDATES = {
   brave: 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe',

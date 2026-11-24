@@ -125,6 +125,7 @@ const reconcileSafely = () => reconcileTabs().catch((error) => console.error('mu
 chrome.runtime.onStartup.addListener(reconcileSafely);
 chrome.runtime.onInstalled.addListener(reconcileSafely); // also fires when the extension is reloaded
 
+// @test-hook:start (removed from the store build by scripts/build.mjs)
 // Handle for the browser tests. simulateRestart rebuilds the engine from storage like a freshly woken worker;
 // clearSession also forgets tab assignments and installed rules, like an extension reload does.
 globalThis.mlx = {
@@ -148,6 +149,7 @@ globalThis.mlx = {
     await ready;
   },
 };
+// @test-hook:end
 
 // ---- D4: capture Set-Cookie of profile tabs ---------------------------------------------------------------
 // DNR strips Set-Cookie before the browser stores it; this non-blocking observer still sees the original header.

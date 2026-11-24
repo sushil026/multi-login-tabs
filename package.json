@@ -9,6 +9,9 @@
   },
   "scripts": {
     "test": "node --test \"test/*.test.mjs\"",
-    "spike": "node test/spike.mjs && node test/shim-spike.mjs && node test/popup-spike.mjs && node test/resilience-spike.mjs"
+    "build": "node scripts/build.mjs",
+    "smoke": "node scripts/build.mjs && node test/dist-smoke.mjs",
+    "package": "node scripts/build.mjs && node test/dist-smoke.mjs && node scripts/zip.mjs",
+    "spike":"node test/spike.mjs && node test/shim-spike.mjs && node test/popup-spike.mjs && node test/resilience-spike.mjs"
   }
 }
