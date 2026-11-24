@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Multi Login Tabs</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Multi Login Tabs</h1>
+      <p id="current" class="current" aria-live="polite"></p>
+    </header>
+
+    <div id="warning" class="warning" role="alert" hidden>
+      <span id="warning-text"></span>
+      <button id="dismiss" type="button">Dismiss</button>
+    </div>
+
+    <label class="url">
+      <span>Address to open</span>
+      <input id="url" type="text" inputmode="url" spellcheck="false" placeholder="http://localhost:3100" />
+    </label>
+
+    <ul id="profiles" class="profiles"></ul>
+
+    <div class="footer">
+      <button id="open-all" type="button">Open in all profiles</button>
+      <button id="add" type="button">Add profile</button>
+    </div>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
